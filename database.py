@@ -5,7 +5,7 @@ import os
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
-    "postgresql://postgres:123456@localhost:5432/construction_db"
+    "postgresql://postgres:    @localhost:5432/construction_db"
 )
 
 # Fix lỗi Render dùng "postgres://" thay vì "postgresql://"
