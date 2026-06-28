@@ -98,3 +98,10 @@ def delete_article(id: int, db: Session = Depends(get_db)):
     db.delete(article)
     db.commit()
     return {"message": "Đã xóa bài viết thành công"}
+
+@app.get("/articles/slug/{slug}")
+def get_article_by_slug(slug: str, db: Session = Depends(get_db)):
+    article = db.query(Article).filter(Article.slug == slug).first()
+    if not article:
+        raise HTTPException(status_code=404, detail="Không tìm thấy bài viết")
+    return article
