@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import Optional
 from pydantic import BaseModel
@@ -9,7 +10,22 @@ import re
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(title="BK ARCH API", version="1.0.0")
+
+# Cho phép hcmut.pages.dev gọi API (CORS)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://hcmut.pages.dev",
+        "http://127.0.0.1:5500",   # Live Server local dev
+        "http://localhost:5500",
+        "http://127.0.0.1:3000",
+        "http://localhost:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Hàm tự động tạo slug từ tiêu đề
 def create_slug(title: str) -> str:
