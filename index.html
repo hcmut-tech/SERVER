@@ -162,20 +162,20 @@
     <h1>🏗️ Admin Panel</h1>
     <p>Chọn website bạn muốn quản lý</p>
 
-    <button class="site-btn" onclick="selectSite('http://127.0.0.1:8000', 'Website 1')">
-      🌐 Website 1
+    <button class="site-btn" onclick="selectSite('http://127.0.0.1:8000', 'local dev')">
+      🌐 local dev
       <span>http://127.0.0.1:8000</span>
     </button>
 
-    <button class="site-btn" onclick="selectSite('http://127.0.0.1:8001', 'Website 2')">
-      🌐 Website 2
-      <span>http://127.0.0.1:8001</span>
+    <button class="site-btn" onclick="selectSite('https://server-6baj.onrender.com', 'Website 2')">
+      🚀 BK ARCH Production
+      <span>https://server-6baj.onrender.com</span>
     </button>
 
     <div class="or-divider">── hoặc nhập địa chỉ tùy chỉnh ──</div>
 
     <div class="custom-input">
-      <input type="text" id="custom-url" placeholder="https://your-api.onrender.com">
+      <input type="text" id="custom-url" placeholder="https://server-6baj.onrender.com">
       <button onclick="selectCustom()">→</button>
     </div>
   </div>
