@@ -17,6 +17,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://hcmut.pages.dev",
+        "https://server-6baj.onrender.com",
         "http://127.0.0.1:5500",   # Live Server local dev
         "http://localhost:5500",
         "http://127.0.0.1:3000",
