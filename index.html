@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Quản lý bài viết</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f5f5f5; }
+
+    /* Màn hình chọn website */
+    .select-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #2c3e50, #3498db);
+    }
+    .select-box {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      text-align: center;
+      width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .select-box h1 { color: #2c3e50; margin-bottom: 8px; font-size: 22px; }
+    .select-box p { color: #888; margin-bottom: 25px; font-size: 14px; }
+    .site-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      color: #2c3e50;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .site-btn:hover { border-color: #3498db; background: #f0f7ff; }
+    .site-btn span { font-size: 12px; color: #888; font-weight: normal; display: block; margin-top: 3px; }
+    .or-divider { color: #ccc; margin: 15px 0; font-size: 13px; }
+    .custom-input { display: flex; gap: 8px; margin-top: 5px; }
+    .custom-input input {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .custom-input button {
+      padding: 10px 15px;
+      background: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    /* Màn hình Admin chính */
+    .admin-screen { display: none; }
+    .header {
+      background: #2c3e50;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left { font-size: 18px; font-weight: bold; }
+    .header-right { display: flex; align-items: center; gap: 15px; }
+    .site-tag {
+      background: #3498db;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+    .switch-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .switch-btn:hover { background: rgba(255,255,255,0.3); }
+
+    .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+    .form-box {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .form-box h2 { margin-bottom: 15px; color: #2c3e50; }
+    .form-box input, .form-box select, .form-box textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    .form-box textarea { height: 200px; resize: vertical; }
+    .btn {
+      padding: 10px 25px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .btn-green { background: #27ae60; color: white; }
+    .btn-blue  { background: #2980b9; color: white; }
+    .btn-red   { background: #e74c3c; color: white; }
+    .btn-gray  { background: #95a5a6; color: white; }
+    .btn:hover { opacity: 0.85; }
+
+    .list-box {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .list-box h2 { margin-bottom: 15px; color: #2c3e50; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+    th { background: #f8f9fa; font-weight: bold; color: #555; }
+    tr:hover { background: #f8f9fa; }
+    .badge {
+      background: #3498db;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #27ae60;
+      color: white;
+      padding: 12px 25px;
+      border-radius: 8px;
+      display: none;
+      font-size: 14px;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+<!-- MÀN HÌNH CHỌN WEBSITE -->
+<div class="select-screen" id="select-screen">
+  <div class="select-box">
+    <h1>🏗️ Admin Panel</h1>
+    <p>Chọn website bạn muốn quản lý</p>
+
+    <button class="site-btn" onclick="selectSite('http://127.0.0.1:8000', 'Website 1')">
+      🌐 Website 1
+      <span>http://127.0.0.1:8000</span>
+    </button>
+
+    <button class="site-btn" onclick="selectSite('http://127.0.0.1:8001', 'Website 2')">
+      🌐 Website 2
+      <span>http://127.0.0.1:8001</span>
+    </button>
+
+    <div class="or-divider">── hoặc nhập địa chỉ tùy chỉnh ──</div>
+
+    <div class="custom-input">
+      <input type="text" id="custom-url" placeholder="https://your-api.onrender.com">
+      <button onclick="selectCustom()">→</button>
+    </div>
+  </div>
+</div>
+
+<!-- MÀN HÌNH ADMIN CHÍNH -->
+<div class="admin-screen" id="admin-screen">
+
+  <div class="header">
+    <div class="header-left">🏗️ Quản lý bài viết xây dựng</div>
+    <div class="header-right">
+      <span class="site-tag" id="site-label"></span>
+      <button class="switch-btn" onclick="switchSite()">⇄ Đổi website</button>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="form-box">
+      <h2 id="form-title">➕ Thêm bài viết mới</h2>
+      <input type="hidden" id="edit-id">
+      <input type="text" id="title" placeholder="Tiêu đề bài viết...">
+      <select id="category">
+        <option value="">-- Chọn danh mục --</option>
+        <option value="Thi công">Thi công</option>
+        <option value="Vật liệu">Vật liệu</option>
+        <option value="Thiết kế">Thiết kế</option>
+        <option value="Kinh nghiệm">Kinh nghiệm</option>
+        <option value="Tin tức">Tin tức</option>
+      </select>
+      <input type="text" id="thumbnail" placeholder="Link ảnh bìa (không bắt buộc)...">
+      <textarea id="content" placeholder="Nội dung bài viết (có thể dùng HTML)..."></textarea>
+      <button class="btn btn-green" onclick="saveArticle()">💾 Lưu bài viết</button>
+      <button class="btn btn-gray" onclick="resetForm()" style="margin-left:10px">✖ Hủy</button>
+    </div>
+
+    <div class="list-box">
+      <h2>📋 Danh sách bài viết (<span id="count">0</span> bài)</h2>
+      <br>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tiêu đề</th>
+            <th>Danh mục</th>
+            <th>Ngày tạo</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="article-list"></tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let API = '';
+
+  // Chọn website từ danh sách
+  function selectSite(url, name) {
+    API = url;
+    document.getElementById('site-label').textContent = name;
+    document.getElementById('select-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'block';
+    loadArticles();
+  }
+
+  // Chọn website tùy chỉnh
+  function selectCustom() {
+    const url = document.getElementById('custom-url').value.trim();
+    if (!url) { alert('Vui lòng nhập địa chỉ API!'); return; }
+    selectSite(url, url);
+  }
+
+  // Đổi về màn hình chọn website
+  function switchSite() {
+    document.getElementById('select-screen').style.display = 'flex';
+    document.getElementById('admin-screen').style.display = 'none';
+    resetForm();
+  }
+
+  // Tải danh sách bài viết
+  async function loadArticles() {
+    try {
+      const res = await fetch(`${API}/articles`);
+      const articles = await res.json();
+      document.getElementById('count').textContent = articles.length;
+      const tbody = document.getElementById('article-list');
+      tbody.innerHTML = '';
+      if (articles.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999">Chưa có bài viết nào</td></tr>';
+        return;
+      }
+      articles.forEach(a => {
+        const date = new Date(a.created_at).toLocaleDateString('vi-VN');
+        tbody.innerHTML += `
+          <tr>
+            <td>${a.id}</td>
+            <td><strong>${a.title}</strong></td>
+            <td><span class="badge">${a.category || 'Chưa phân loại'}</span></td>
+            <td>${date}</td>
+            <td>
+              <button class="btn btn-blue" onclick="editArticle(${a.id})" style="padding:5px 12px;margin-right:5px">✏️ Sửa</button>
+              <button class="btn btn-red" onclick="deleteArticle(${a.id})" style="padding:5px 12px">🗑️ Xóa</button>
+            </td>
+          </tr>`;
+      });
+    } catch(e) {
+      showToast('❌ Không kết nối được server!');
+    }
+  }
+
+  // Lưu bài viết
+  async function saveArticle() {
+    const id = document.getElementById('edit-id').value;
+    const data = {
+      title: document.getElementById('title').value,
+      category: document.getElementById('category').value,
+      content: document.getElementById('content').value,
+      thumbnail: document.getElementById('thumbnail').value
+    };
+    if (!data.title || !data.content) {
+      alert('Vui lòng nhập tiêu đề và nội dung!');
+      return;
+    }
+    if (id) {
+      await fetch(`${API}/articles/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      showToast('✅ Đã cập nhật bài viết!');
+    } else {
+      await fetch(`${API}/articles`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      showToast('✅ Đã thêm bài viết mới!');
+    }
+    resetForm();
+    loadArticles();
+  }
+
+  // Sửa bài viết
+  async function editArticle(id) {
+    const res = await fetch(`${API}/articles/${id}`);
+    const a = await res.json();
+    document.getElementById('edit-id').value = a.id;
+    document.getElementById('title').value = a.title;
+    document.getElementById('category').value = a.category || '';
+    document.getElementById('thumbnail').value = a.thumbnail || '';
+    document.getElementById('content').value = a.content;
+    document.getElementById('form-title').textContent = '✏️ Sửa bài viết';
+    window.scrollTo(0, 0);
+  }
+
+  // Xóa bài viết
+  async function deleteArticle(id) {
+    if (!confirm('Bạn chắc chắn muốn xóa bài viết này?')) return;
+    await fetch(`${API}/articles/${id}`, { method: 'DELETE' });
+    showToast('🗑️ Đã xóa bài viết!');
+    loadArticles();
+  }
+
+  // Reset form
+  function resetForm() {
+    document.getElementById('edit-id').value = '';
+    document.getElementById('title').value = '';
+    document.getElementById('category').value = '';
+    document.getElementById('thumbnail').value = '';
+    document.getElementById('content').value = '';
+    document.getElementById('form-title').textContent = '➕ Thêm bài viết mới';
+  }
+
+  // Hiện thông báo
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+  }
+</script>
+</body>
+</html>
