@@ -52,6 +52,15 @@ class ArticleInput(BaseModel):
 def get_articles(db: Session = Depends(get_db)):
     return db.query(Article).all()
 
+# ✅ Slug TRƯỚC id
+@app.get("/articles/slug/{slug}")
+def get_article_by_slug(slug: str, db: Session = Depends(get_db)):
+    article = db.query(Article).filter(Article.slug == slug).first()
+    if not article:
+        raise HTTPException(status_code=404, detail="Không tìm thấy bài viết")
+    return article
+
+
 # Lấy 1 bài viết theo ID
 @app.get("/articles/{id}")
 def get_article(id: int, db: Session = Depends(get_db)):
